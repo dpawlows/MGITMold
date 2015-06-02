@@ -12,7 +12,7 @@ program GITM
   ! ------------------------------------------------------------------------
   ! initialize stuff
   ! ------------------------------------------------------------------------
-!new test
+
   call init_mpi
   call start_timing("GITM")
   call delete_stop
