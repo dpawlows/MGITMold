@@ -1,0 +1,7 @@
+*.mod
+*.o
+mpif90.h
+mpif.h
+Makefile.DEPEND
+Makefile.RULES
+*.protex
