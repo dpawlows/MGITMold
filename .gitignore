@@ -30,7 +30,6 @@ src/libSHARE.a
 src/output.f90
 src/planet.f90
 src/set_vertical_bcs.f90
-srcData/.gitignore
 srcData/UAM.in
 srcGlow/libGLOW.a
 srcInterface/Makefile.DEPEND
