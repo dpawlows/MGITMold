@@ -112,7 +112,7 @@ none		northern hemisphere amie file
 none		southern hemisphere amie file
 
 #F107
-150.0		f10.7
+150.0		f10.7  -See #NGDC_INDICES for more options
 150.0		f10.7 averaged over 81 days
 
 #HPI
