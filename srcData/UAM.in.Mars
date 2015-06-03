@@ -2,7 +2,7 @@
 #DEBUG
 0		debug level
 0		cpu to watch
-10.0		dt between normal code output to stdout
+10.0	dt between normal code output to stdout
 F		usebarriers - forces the code to stop and wait more often
 
 #RESTART
@@ -11,35 +11,40 @@ F
 #GRID
 8		lons
 4		lats
--90.0		minimum latitude to model
-90.0		maximum latitude to model
+-90.0	minimum latitude to model
+90.0	maximum latitude to model
 0.0		longitude to model (ignored in everything but 1D)
+
+#ALTITUDE
+000.0		minimum altitude to use
+300.0		maximum altitude to use (ignored unless the following is F)
+F      	    use stretched grid
 
 #DIFFUSION
 T
 100.0		Eddy Diffusion Coefficient (Should be about 37.5 for 1-D runs)
-0.010		Total Eddy Diffusion applied at alts below this pressures level
-0.005		No Eddy Diffusion at altitudes above this pressure level
+0.020		Total Eddy Diffusion applied at alts below this pressures level
+0.003		No Eddy Diffusion at altitudes above this pressure level
 
 #THERMALDIFFUSION
 2.22e-4		Thermal conductivity (code use kappa = number * T**0.75)
 
 #CPUTIMEMAX
-86000.0		Maximum amount of cputime to use before stopping the code
+604800.0		Maximum amount of cputime to use before stopping the code
 
 #TIMESTART
 2002		year
-12		month
-21		day
-12		hour
+11		month
+01		day
+00		hour
 00		minute
 00		second
 
 #TIMEEND
 2002		year
-12		month
-22		day
-12		hour
+11		month
+02		day
+00		hour
 00		minute
 00		second
 
@@ -67,10 +72,6 @@ F		if you want to run with msis and iri only (i.e. not GITM)
 60.0		how often to update potential
 60.0		how often to update aurora and euv
 
-#ALTITUDE
-000.0		minimum altitude to use
-300.0		maximum altitude to use (ignored unless the following is F)
-F		use stretched grid
 
 #TOPOGRAPHY
 F			If you want to include topography
@@ -79,6 +80,18 @@ F			If you want to include topography
 #DAMPING
 T			Turn on vertical velocity damping term in vertical_solver
 	
+#DUST
+0.5
+0.003
+
+#EUV_DATA
+F                Make T to use EUV datafile
+fismdata.dat     Filename to use
+
+#USEWVALUE
+F            Whether to use W-value approximation for secondary ionization
+34           W-value to use
+
 #INITIAL
 T		initialize thermosphere using MSIS
 F		initialize ionosphere using IRI
@@ -108,6 +121,7 @@ none		southern hemisphere amie file
 #KP
 1.0		kp
 
+
 #SOLARWIND
 0.0		IMF Bx
 0.0		IMF By
@@ -119,9 +133,9 @@ T		 UseSolarHeating
 F		 UseJouleHeating
 F		 UseAuroralHeating
 F		 UseNOCooling
-F		 UseOCooling
+T		 UseOCooling
 T		 UseConduction
-T		 UseTurbulentConduction
+F		 UseTurbulentConduction
 F		 UseUpdatedTurbulentConduction
 1.0		 EddyScalingFactor
 
@@ -146,15 +160,15 @@ T		UseCoriolis
 T		UseGravity
 
 #IONFORCING
-T               UseExB
-T               UseIonPressure
-T               UseGravity
-T               UseNeutralDrag
-F		UseDynamo
+F               UseExB
+F               UseIonPressure
+F               UseGravity
+F               UseNeutralDrag
+F	            UseDynamo
 
 #CHEMISTRY
 T		UseIonChemistry
-T		UseIonAdvection
+F		UseIonAdvection
 T		UseNeutralChemistry
 
 #STRETCH
