@@ -148,8 +148,8 @@ F                UseNeutralFrictionInSolver
 F               UseStressHeating
 
 #EDDYVELOCITY
-F               UseBoquehoAndBlelly
-T               UseEddyCorrection
+T               UseBoquehoAndBlelly
+F               UseEddyCorrection
 
 #FORCING
 T		UsePressureGradient
