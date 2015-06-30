@@ -221,7 +221,7 @@ cTime = cTimeSave
 
   case ('3DALL')
 
-     nvars_to_write = 13+nSpeciesTotal+nSpecies+nIons+nIons-1+1+1+1
+     nvars_to_write = 13+nSpeciesTotal+nSpecies+nIons+nIons-1+1+1
      call output_3dall(iBlock)
 
   case ('3DNEU')
