@@ -71,8 +71,8 @@ subroutine output(dir, iBlock, iOutputType)
   character (len=5) :: proc_str,cBlock, cType
   character (len=24) :: cTime='', cTimeSave=''
   integer :: iiLat, iiLon, nGCs, cL=0
-  integer :: iLon,iLat,iAlt, nVars_to_Write, nlines, iBLK,iSpecies
-  logical :: done, IsFirstTime = .true., IsThere
+  integer :: iLon,iLat,iAlt, nVars_to_Write, nlines, iBLK,iSpecies,iError
+  logical :: done, IsFirstTime = .true., IsThere,ok
 
   real :: LatFind, LonFind
   real :: rLon, rLat
@@ -188,6 +188,7 @@ cTime = cTimeSave
   !! ---------------------------------------------
 
   if (iOutputType == -1) then
+
      inquire(file=dir//"/"//CurrentSatelliteName//"_"//cTime(1:cL)//".sat", &
           EXIST=IsThere)
      if (.not. DoAppendFiles .or. tSimulation < 0.1 .or. .not. IsThere) then
@@ -222,6 +223,7 @@ cTime = cTimeSave
   case ('3DALL')
 
      nvars_to_write = 13+nSpeciesTotal+nSpecies+nIons+nIons-1+1+1
+
      call output_3dall(iBlock)
 
   case ('3DNEU')
@@ -308,7 +310,13 @@ cTime = cTimeSave
 
   end select
 
+
+call mpi_barrier(iCommGITM,iError)
+
   close(unit=iOutputUnit_)
+
+
+
 
   !! Now write the header file
 
@@ -852,8 +860,10 @@ subroutine output_3dall(iBlock)
 
   implicit none
 
+  logical :: ok
   integer, intent(in) :: iBlock
   integer :: iAlt, iLat, iLon, iiAlt, iiLat, iiLon, i
+
 
   do iAlt=-1,nAlts+2
      !!! Why ???
