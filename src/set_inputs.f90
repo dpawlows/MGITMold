@@ -76,7 +76,7 @@ subroutine set_inputs
                  write(*,*) 'iHour    (integer)'
                  write(*,*) 'iMinute  (integer)'
                  write(*,*) 'iSecond  (integer)'
-                 IsDone = .true.
+
               else
 
                  iTimeArray = iStartTime
@@ -900,7 +900,7 @@ subroutine set_inputs
 
            if (UseEUVData) call Set_Euv(iError)
            if (iError /= 0) then
-              write(*,*) 'Incorrect format for #EUV_DATA or issues with file '&
+              write(*,*) 'Incorrect format for #EUV_DATA or issues with file ',&
                   cEUVFile
               write(*,*) '#EUV_DATA'
               write(*,*) 'UseEUVData            (logical)'
