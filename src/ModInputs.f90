@@ -232,7 +232,7 @@ module ModInputs
 
   real :: LogNS0(nSpecies)
 
-  logical                   :: UseEUVData =.false.
+  logical                   :: UseEUVData =.false., UseFluxAtPlanet = .false.
   character (len=iCharLen_) :: cEUVFile
 
   ! These are Mars Specific, but ignored by other codes:
