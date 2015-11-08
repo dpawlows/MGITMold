@@ -900,9 +900,11 @@ subroutine set_inputs
 
            if (UseEUVData) call Set_Euv(iError)
            if (iError /= 0) then
-              write(*,*) 'Incorrect format for #EUV_DATA'
+              write(*,*) 'Incorrect format for #EUV_DATA or issues with file '&
+                  cEUVFile
               write(*,*) '#EUV_DATA'
               write(*,*) 'UseEUVData            (logical)'
+              write(*,*) 'UseFluxAtPlanet            (logical)'
               write(*,*) 'cEUVFile              (string)'
            endif
 
