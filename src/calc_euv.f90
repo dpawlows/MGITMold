@@ -610,6 +610,7 @@ subroutine Set_Euv(iError)
   logical :: NotDone = .true.
   integer ::  i, iline, ioerror, nline, nILine = 1
   cline = ' '
+  
 
   open(unit = iInputUnit_, file=cEUVFile, IOSTAT = iError)
 
@@ -668,7 +669,7 @@ subroutine Set_Euv(iError)
   close(iInputUnit_)
   nSeeTimes = iline - 1
 
-  if (nSeeTimes .gt. 3) iError = 0
+  if (nSeeTimes .ge. 3) iError = 0
 
 end subroutine Set_Euv
 
