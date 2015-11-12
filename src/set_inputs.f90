@@ -31,6 +31,7 @@ subroutine set_inputs
 
   call report("set_inputs",1)
 
+
   iError = 0
   IsDone = .false.
   iLine  = 1
@@ -897,8 +898,8 @@ subroutine set_inputs
            call read_in_logical(UseEUVData, iError)
            call read_in_logical(UseFluxAtPlanet, iError)
            call read_in_string(cEUVFile, iError)
-
-           if (UseEUVData) call Set_Euv(iError)
+           call Set_Euv(iError)
+           iError = 0
            if (iError /= 0) then
               write(*,*) 'Incorrect format for #EUV_DATA or issues with file ',&
                   cEUVFile
