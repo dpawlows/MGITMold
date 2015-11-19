@@ -896,17 +896,19 @@ subroutine set_inputs
 
         case ("#EUV_DATA")
            call read_in_logical(UseEUVData, iError)
-           call read_in_logical(UseFluxAtPlanet, iError)
-           call read_in_string(cEUVFile, iError)
-           call Set_Euv(iError)
-           iError = 0
-           if (iError /= 0) then
-              write(*,*) 'Incorrect format for #EUV_DATA or issues with file ',&
-                  cEUVFile
-              write(*,*) '#EUV_DATA'
-              write(*,*) 'UseEUVData            (logical)'
-              write(*,*) 'UseFluxAtPlanet            (logical)'
-              write(*,*) 'cEUVFile              (string)'
+           if (UseEUVData) then
+              call read_in_logical(UseFluxAtPlanet, iError)
+              call read_in_string(cEUVFile, iError)
+              call Set_Euv(iError)
+              iError = 0
+              if (iError /= 0) then
+                 write(*,*) 'Incorrect format for #EUV_DATA or issues with file ',&
+                      cEUVFile
+                 write(*,*) '#EUV_DATA'
+                 write(*,*) 'UseEUVData            (logical)'
+                 write(*,*) 'UseFluxAtPlanet            (logical)'
+                 write(*,*) 'cEUVFile              (string)'
+              endif
            endif
 
         case ("#GLOW")
