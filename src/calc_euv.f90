@@ -481,12 +481,8 @@ subroutine calc_scaled_euv
     end if
 
     !!need to convert from W/m^2 to photons/m^2/s
-<<<<<<< HEAD
+
     do N=1,Num_WaveLengths_High
-        Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8) &
-             /(SunOrbitEccentricity**2)
-=======
-    do N=1,Num_WaveLengths_High 
        if (UseFluxAtPlanet) then
           !!! Don't correct for Orbit Eccentricity!!!
           Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8)
@@ -494,7 +490,7 @@ subroutine calc_scaled_euv
           Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8) &
                /(SunOrbitEccentricity**2)
        endif
->>>>>>> 47a4fb14f1f322832540f6a32a56e172e4c445b5
+
      enddo
      call end_timing("new_euv")
 
@@ -617,7 +613,7 @@ subroutine Set_Euv(ioError)
   logical :: NotDone = .true.
   integer ::  i, iline, ierror, nline, nILine = 1
   cline = ' '
-  
+
 
   open(unit = iInputUnit_, file=cEUVFile, IOSTAT = iError)
 
