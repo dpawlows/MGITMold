@@ -37,15 +37,15 @@ subroutine euv_ionization_heat(iBlock)
   endif
 
   if (is1D) then
-    whichdim = 2 
-  else 
+    whichdim = 2
+  else
     whichdim = 4
   endif
 
   call report("euv_ionization_heat",2)
   call start_timing("euv_ionization_heat")
 
-  
+
   call chapman_integrals(iBlock)
   Photoelectronfactor = 1.0
   if (UseWValue) then
@@ -56,7 +56,7 @@ subroutine euv_ionization_heat(iBlock)
   EuvIonRate = 0.0
   EuvHeating(:,:,:,iBlock)= 0.0
   eEuvHeating(:,:,:,iBlock) = 0.0
-  EuvIonRateS(:,:,:,:,iBlock) = 0.0 
+  EuvIonRateS(:,:,:,:,iBlock) = 0.0
   EuvDissRateS(:,:,:,:,iBlock) = 0.0
   SIR(:,:,:,:,iblock) = 0.0
 
@@ -101,7 +101,7 @@ subroutine euv_ionization_heat(iBlock)
                 EuvIonRateS(:,:,iAlt,iIon,iBlock) + &
                 Intensity*PhotoIon(iWave,iIon)
         enddo
- 
+
        do iSpecies = 1, nSpeciesTotal
            EuvDissRateS(:,:,iAlt,iSpecies,iBlock) = &
                 EuvDissRateS(:,:,iAlt,iSpecies,iBlock) + &
@@ -119,7 +119,7 @@ subroutine euv_ionization_heat(iBlock)
 
      EuvHeating(:,:,iAlt,iBlock)  = EHeat*HeatingEfficiency_CB(:,:,iAlt,iBlock)
      eEuvHeating(:,:,iAlt,iBlock) = EHeat*eHeatingEfficiency_CB(:,:,iAlt,iBlock)
-     do ilon = 1, nlons 
+     do ilon = 1, nlons
         do ilat =1 ,nlats
            if (Altitude_GB(iLon,iLat,iAlt,iBlock) .lt. 80000.0) then
               EUVHeating(iLon,iLat,iAlt,iBlock) =0.0
@@ -127,7 +127,7 @@ subroutine euv_ionization_heat(iBlock)
            endif
         enddo
      enddo
- 
+
     enddo
 
   !\
@@ -146,7 +146,7 @@ subroutine euv_ionization_heat(iBlock)
 
   if (UseSolarHeating) then
      do iAlt = 1, nAlts
-        
+
 
         EuvHeating(:,:,iAlt,iBlock) = EuvHeating(:,:,iAlt,iBlock) / &
            Rho(1:nLons,1:nLats,iAlt,iBlock) / &
@@ -157,7 +157,7 @@ subroutine euv_ionization_heat(iBlock)
              TempUnit(1:nLons,1:nLats,iAlt) / &
              HeatingEfficiency_CB(:,:,iAlt,iBlock)
 
-        
+
 
 
      enddo
@@ -178,7 +178,7 @@ subroutine calc_euv
 
   use ModEUV
   use ModInputs
- 
+
 
   implicit none
 
@@ -188,7 +188,7 @@ subroutine calc_euv
   !:::::::::::::::::::::::::::::::: EUVAC :::::::::::::::::::::::
   !------ This EUV flux model uses the F74113 solar reference spectrum and
   !------ ratios determined from Hinteregger's SERF1 model. It uses the daily
-  !------ F10.7 flux (F107) and the 81 day mean (F107A) as a proxy for 
+  !------ F10.7 flux (F107) and the 81 day mean (F107A) as a proxy for
   !------ scaling
   !------ The fluxes are returned in EUVFLX and correspond to the 37
   !------ wavelength
@@ -205,7 +205,7 @@ subroutine calc_euv
   !----- The scaling factors are restricted to be greater than 0.8
   !
 
- 
+
   do i = 1, Num_waveLengths_Low
 
      FLXFAC=(1.0 + AFAC(I) * (0.5*(F107+F107A) - 80.0))
@@ -240,12 +240,12 @@ subroutine calc_scaled_euv
   real    :: xuvfac, hlymod, heimod, xuvf, wavelength_ave
   real (Real8_) :: rtime
   integer, dimension(7) :: Time_Array
-  
+
  !DAVES:
   real :: wvavg(Num_WaveLengths_High),SeeTime(nSeeTimes),tDiff(nSeeTimes)
   real :: y1(Num_WaveLengths_High), y2(Num_WaveLengths_High), x1, x2, x
   real :: m(Num_WaveLengths_High), k(Num_WaveLengths_High)
-  character (len=2) :: dday, dhour, dminute 
+  character (len=2) :: dday, dhour, dminute
   character (len=7) :: dtime
 
   ! regression coefficients which reduce to solar min. spectrum:
@@ -420,7 +420,8 @@ subroutine calc_scaled_euv
 
 
   Flux_of_EUV = Flux_of_EUV/(SunOrbitEccentricity**2)
-
+!   write(*,*) SunOrbitEccentricity
+!   stop
 
   do N=1,Num_WaveLengths_High
      wvavg(N)=(WAVEL(N)+WAVES(N))/2.
@@ -436,10 +437,10 @@ subroutine calc_scaled_euv
     enddo
 
     tDiff = CurrentTime - SeeTime
-    
+
     where (tDiff .lt. 0) tDiff = 1.e20
     iMin = minloc(tDiff)
-    
+
     Timed_Flux = SeeFlux(:,iMin(1))
 
     if (CurrentTime .ge. FlareTimes(iFlare) .and. CurrentTime-dt .le. FlareTimes(iFlare)) then
@@ -450,8 +451,8 @@ subroutine calc_scaled_euv
        FlareEndTime = SeeTime(FlareEndIndex)
        DuringFlare = .true.
        iFlare = iFlare + 1
-       
-    else 
+
+    else
        if (DuringFlare) then
           if (Seetime(iMin(1)+1) .lt. FlareTimes(iFlare) .or. FlareTimes(iFlare) .eq. 0) then
              if (CurrentTime .lt. SeeTime(FlareStartIndex)) then
@@ -459,15 +460,15 @@ subroutine calc_scaled_euv
                 Timed_Flux = SeeFlux(:,FlareStartIndex)
              else
                 if (CurrentTime .le. FlareEndTime) then
-                   !Exponentially interpolate between last seetime and next seetim 
+                   !Exponentially interpolate between last seetime and next seetim
                    !using y = kexp(-mx)
-                   
+
                    y1 = SeeFlux(:,iMin(1))
                    y2 = SeeFlux(:,iMin(1)+1)
                    x1 = 0
                    x2 = SeeTime(iMin(1)+1) - SeeTime(iMin(1))
                    x = CurrentTime - SeeTime(iMin(1))
-                   
+
                    m = ALOG(y2/y1)/(x1-x2)
                    k = y1*exp(m*x1)
                    Timed_Flux = k*exp(-1*m*x)
@@ -478,9 +479,9 @@ subroutine calc_scaled_euv
           end if
        end if
     end if
-    
+
     !!need to convert from W/m^2 to photons/m^2/s
-    do N=1,Num_WaveLengths_High 
+    do N=1,Num_WaveLengths_High
         Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8) &
              /(SunOrbitEccentricity**2)
      enddo
@@ -534,7 +535,7 @@ subroutine init_euv
      endif
 
 !    PhotoAbs_O2(NN)      = Photoabsorption_O2(N)
-!    PhotoAbs_O(NN)       = Photoabsorption_O(N) 
+!    PhotoAbs_O(NN)       = Photoabsorption_O(N)
 !    PhotoAbs_N2(NN)      = Photoabsorption_N2(N)
 !    PhotoAbs_CO2(NN)     = Photoabsorption_CO2(N)
 !    PhotoAbs_CO(NN)      = Photoabsorption_CO(N)
@@ -570,7 +571,7 @@ enddo
      PhotoIon_N       = PhotoIon_N         / 10000.0
      PhotoIon_OPlus2D = PhotoIon_OPlus2D   / 10000.0
      PhotoIon_OPlus2P = PhotoIon_OPlus2P   / 10000.0
-     
+
 
 
 !  do n = 1, nS2WaveLengths
@@ -601,7 +602,7 @@ subroutine Set_Euv(iError)
 
   integer, dimension(7)                   :: TimeOfFlare,TimeArray
   real, dimension(6+Num_Wavelengths_High) :: temp
-  
+
   logical :: NotDone = .true.
   integer ::  i, iline, ioerror, nline, nILine = 1
   cline = ' '
@@ -613,36 +614,36 @@ subroutine Set_Euv(iError)
      write(*,*) "Code : ",iError,cEUVFile
      call stop_gitm("Stopping in calc_euv")
   endif
-     
+
   iline = 1
 
   do while (NotDone)
      read(iInputUnit_,'(a)',iostat=iError) cLine
 
-     if (cline(1:1) .eq. '#') then 
+     if (cline(1:1) .eq. '#') then
 
-        ! Remove anything after a space or TAB                                            
+        ! Remove anything after a space or TAB
         i=index(cLine,' '); if(i>0)cLine(i:len(cLine))=' '
         i=index(cLine,char(9)); if(i>0)cLine(i:len(cLine))=' '
-        
+
         select case (cLine)
-           
+
         case("#FLARES")
            read(iInputUnit_,*) nFlares
-           do i = 1, nFlares 
+           do i = 1, nFlares
               read(iInputUnit_,*) TimeOfFlare(1:6)
               TimeOfFlare(7) = 0
               call time_int_to_real(TimeOfFlare,FlareTimes(i))
            enddo
-           
-        case('#START')  
+
+        case('#START')
            NotDone = .false.
-           
+
         end select
      end if
-     
+
      iline = iline + 1
-     
+
   enddo
 
   TimeSee(:) = 0
@@ -650,7 +651,7 @@ subroutine Set_Euv(iError)
   read(iInputUnit_,*,iostat=iError) temp
 
   do while (iError .eq. 0)
-     
+
      TimeArray(1:6) = temp(1:6)
      TimeArray(7) = 0
      call time_int_to_real(TimeArray,TimeSee(iLine))
@@ -673,7 +674,7 @@ subroutine UpdateSecondaryIonization(SecondaryRate)
 
   use ModEUV
   use ModTime, only : CurrentTime,iTimeArray
-  
+
   implicit None
 
   real, intent(out) :: SecondaryRate(nLons,nLats,nalts)
@@ -695,7 +696,7 @@ subroutine UpdateSecondaryIonization(SecondaryRate)
      x1 = 0
      x2 = SecondaryIonTime(iMin(1)+1) - SecondaryIonTime(iMin(1))
      x = CurrentTime - SecondaryIonTime(iMin(1))
-     
+
      m = ALOG(y2/y1)/(x1-x2)
      k = y1*exp(m*x1)
      SecondaryRate(1,1,:) = k*exp(-1*m*x)
@@ -712,6 +713,6 @@ subroutine UpdateSecondaryIonization(SecondaryRate)
 
 
 end subroutine UpdateSecondaryIonization
-  
-  
-  
+
+
+
