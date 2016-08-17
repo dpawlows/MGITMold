@@ -481,9 +481,20 @@ subroutine calc_scaled_euv
     end if
 
     !!need to convert from W/m^2 to photons/m^2/s
+<<<<<<< HEAD
     do N=1,Num_WaveLengths_High
         Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8) &
              /(SunOrbitEccentricity**2)
+=======
+    do N=1,Num_WaveLengths_High 
+       if (UseFluxAtPlanet) then
+          !!! Don't correct for Orbit Eccentricity!!!
+          Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8)
+       else
+          Flux_of_EUV(N) = Timed_Flux(N)*wvavg(N)*1.0e-10/(6.626e-34*2.998e8) &
+               /(SunOrbitEccentricity**2)
+       endif
+>>>>>>> 47a4fb14f1f322832540f6a32a56e172e4c445b5
      enddo
      call end_timing("new_euv")
 
@@ -589,13 +600,13 @@ enddo
 
 end subroutine init_euv
 
-subroutine Set_Euv(iError)
+subroutine Set_Euv(ioError)
   use ModEUV
   use ModInputs
-
+  use ModGITM, only:iproc
   implicit none
 
-  integer, intent(out)  :: iError
+  integer, intent(out)  :: ioError
 
   character    (len=20)                           :: line, cline
   character    (len=20)                           :: cEUVText(10000)
@@ -604,8 +615,9 @@ subroutine Set_Euv(iError)
   real, dimension(6+Num_Wavelengths_High) :: temp
 
   logical :: NotDone = .true.
-  integer ::  i, iline, ioerror, nline, nILine = 1
+  integer ::  i, iline, ierror, nline, nILine = 1
   cline = ' '
+  
 
   open(unit = iInputUnit_, file=cEUVFile, IOSTAT = iError)
 
@@ -657,14 +669,13 @@ subroutine Set_Euv(iError)
      call time_int_to_real(TimeArray,TimeSee(iLine))
      SeeFlux(:,iline) = temp(7:6+Num_WaveLengths_High)
      iline = iline + 1
-
      read(iInputUnit_,*,iostat=iError) temp
   enddo
 
   close(iInputUnit_)
   nSeeTimes = iline - 1
+  if (nSeeTimes .ge. 3) ioError = 0
 
-  if (nSeeTimes .gt. 3) iError = 0
 
 end subroutine Set_Euv
 
