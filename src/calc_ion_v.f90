@@ -102,7 +102,7 @@ subroutine calc_ion_v(iBlock)
           Velocity(1:nLons,1:nLats,1:nAlts,iNorth_,iBlock) - &
           (PressureGradient(1:nLons,1:nLats,1:nAlts,iNorth_) / IRho) / &
           Collisions(1:nLons,1:nLats,1:nAlts,iVIN_)
-         
+
   else
 
   UDotB = sum(Velocity(1:nLons,1:nLats,1:nAlts,:,iBlock) * BLocal, dim=4)/ &

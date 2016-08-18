@@ -5,7 +5,7 @@ subroutine fill_photo(photoion, photoabs, photodis)
 ! -- E(EUV) = 0.21 (off) or 0.18 (on)
 ! -- TOTAL(1) = 0.0; TOTAL(2) = 0.0
 ! -- populate 1-D and 3-D fields for diagnostics from RT code
-!    (RadCoolingRate,LowAtmosRadRate subroutines) 
+!    (RadCoolingRate,LowAtmosRadRate subroutines)
 ! -- ALS = constant for Amanda Brech = 0.2 (for Comparison Studies Studes Only!)
 ! CVS_new_code:  Dec. 20, 2011 (DP additions)
 ! -- ALS = array from 2-D table (standard input for all cases)
@@ -16,7 +16,7 @@ subroutine fill_photo(photoion, photoabs, photodis)
 
   use ModPlanet
   use ModEUV
-  use ModInputs 
+  use ModInputs
   implicit none
 
   real, intent(out) :: photoion(Num_WaveLengths_High, nIons-1)
@@ -125,13 +125,13 @@ subroutine calc_planet_sources(iBlock)
   integer :: i
 
   call start_timing("calc_planet_sources")
-  ! New sources specificly for Mars include: 
+  ! New sources specificly for Mars include:
   ! (1) calc_radcooling(iBlock):  added 1/31/07 (BOUGHER)
   ! (2) calc_radcode(iBlock)   :  to be added later (NELLI)
   ! (3) OCooling code : added 4/14/12 (BOUGHER)
 
   if (useGravityWave)  call calc_GW(iBlock)
-  
+
   !\ -------------------------------------------------------------------
   ! CO2 NLTE Cooling Formulation from Miguel Lopez-Valverde (2001)
   !/
@@ -154,7 +154,7 @@ subroutine calc_planet_sources(iBlock)
   !/ Cooling ON
   RadCooling(1:nLons,1:nLats,1:nAlts,iBlock) = &
        RadCoolingRate(1:nLons,1:nLats,1:nAlts,iBlock)/&
-       (TempUnit(1:nLons,1:nLats,1:nAlts)) 
+       (TempUnit(1:nLons,1:nLats,1:nAlts))
 
   !/ Cooling OFF (zeroed out)
   !    RadCooling = 0.0
@@ -201,7 +201,7 @@ subroutine calc_planet_sources(iBlock)
 
   endif
 
-  RadCooling(1:nLons,1:nLats,1:nAlts,iBlock) = & 
+  RadCooling(1:nLons,1:nLats,1:nAlts,iBlock) = &
          RadCooling(1:nLons,1:nLats,1:nAlts,iBlock) + OCooling
   !\
   ! ---------------------------------------------------------------
@@ -219,7 +219,7 @@ subroutine calc_planet_sources(iBlock)
 
   !      grtemp(1:nLons,1:nLats,iBlock)=280.0 !240.0
 
-  ! Calculating the solar flux at Mars 
+  ! Calculating the solar flux at Mars
 
   ! SunOrbitEccentricity = sqrt(2.64236)
   do NW=1,L_NSPECTV
@@ -231,7 +231,7 @@ subroutine calc_planet_sources(iBlock)
   ! MAIN LOOP, for MarsGITM horizontal grid (Latitude,Longitude)
 
   if( floor((tSimulation - dT)/DtLTERadiation) == &
-       floor(tSimulation/DtLTERadiation)) then         
+       floor(tSimulation/DtLTERadiation)) then
      ! Do nothing
   else
 
@@ -268,7 +268,7 @@ subroutine calc_planet_sources(iBlock)
 
      SurfaceTemp(1:nLons,1:nLats,iBlock) = SurfaceTemp(1:nLons,1:nLats,iBlock)+&
           dSurfaceTemp(1:nLons,1:nLats,iBlock)*DtLTERadiation
-     
+
      SubsurfaceTemp(1:nLons,1:nLats,iBlock) = SubsurfaceTemp(1:nLons,1:nLats,iBlock)+&
           dSubsurfaceTemp(1:nLons,1:nLats,iBlock)*DtLTERadiation
 
@@ -294,7 +294,7 @@ subroutine calc_planet_sources(iBlock)
 
            ! setting up the vertical fields
            L_LEVELS  = 2*L_LAYERS+3
-           L_NLAYRAD  = L_LAYERS+1   
+           L_NLAYRAD  = L_LAYERS+1
            L_NLEVRAD  = L_LAYERS+2
 
            call calc_lowatmosrad(iblock,iLat,iLon,L_LAYERS,L_LEVELS,&
@@ -325,11 +325,11 @@ subroutine init_topography
   use ModInputs
 
   implicit None
-  
+
 !  real, intent(out) :: altzero2(nLons,nLats,nBlocks)
 
   integer, parameter :: nMOLALons = 1440 , nMOLALats = 720 !1/4 degree resolution
-  
+
   real, dimension(nMolaLons,nMOLALats, 3) :: SurfaceAltitude
   integer :: ilon, ilat, iilon, iilat, jlon, jlat, iBlock
   real :: rlat, rlon,latfind,lonfind
@@ -337,10 +337,10 @@ subroutine init_topography
 
   open(unit=iInputUnit_, file='DataIn/Mars_MOLA_topo.dat', action='read', status="old")
   if (iDebugLevel > 4) write(*,*) "=====> Reading Topography"
-  
+
   do iLat = 1, nMOLALats
      do iLon = 1, nMOLALons
-        
+
         read(iInputUnit_,*) SurfaceAltitude(iLon,iLat,iNorth_), &
              SurfaceAltitude(iLon,iLat,iEast_), &
              SurfaceAltitude(iLon,iLat,iUp_)
@@ -348,16 +348,16 @@ subroutine init_topography
      enddo
   enddo
   close(iInputUnit_)
-  
+
   do iBlock = 1, nBlocks
      do iLon = 1, nLons
         do iLat = 1, nLats
-           
+
            LonFind = Longitude(iLon,iBlock)*180/pi
            LatFind = latitude(iLat,iBlock)*180/pi
-           
+
            do jLon = 1, nMOLALons-1
-              
+
               if (SurfaceAltitude(jLon,1,iEast_) <= LonFind .and. &
                    SurfaceAltitude(jLon+1,1,iEast_) >= LonFind) then
                  iiLon = jLon
@@ -366,9 +366,9 @@ subroutine init_topography
 
               endif
            enddo
-           
+
            do jLat = 1, nMOLALats-1
-              
+
               if (SurfaceAltitude(1,jLat,iNorth_) <= LatFind .and. &
                    SurfaceAltitude(1,jLat+1,iNorth_) >= LatFind) then
                  iiLat = jLat
@@ -376,15 +376,15 @@ subroutine init_topography
                       (SurfaceAltitude(1,jLat+1,iNorth_)-SurfaceAltitude(1,jLat,iNorth_))
               endif
            enddo
-           
+
            altzero(iLon,iLat,iBlock) =  (rLon)*(rLat)*SurfaceAltitude(iiLon,iiLat,iUp_) + &
                 (1-rLon)*(  rLat)*SurfaceAltitude(iiLon +1,iiLat,iUp_) + &
                 (rLon)*(1-rLat)*SurfaceAltitude(iiLon,iiLat+1,iUp_) + &
-                (1-rLon)*(1-rLat)*SurfaceAltitude(iiLon+1,iiLat+1,iUp_) 
+                (1-rLon)*(1-rLat)*SurfaceAltitude(iiLon+1,iiLat+1,iUp_)
 
         enddo
      enddo
-     
+
   enddo
 
 end subroutine init_topography
@@ -397,7 +397,7 @@ subroutine calc_radcooling(iBlock)
   !  ---------------------------------------------------------------------
   !  Purpose: to calculate NLTE CO2 15-micron cooling in Mars upper atmosphere
   !           (above 80 km, where NLTE physics becomes important)
-  !  Source: nltecool.F from mtgcm16 
+  !  Source: nltecool.F from mtgcm16
   !  Coders: M. Lopez-Valverde (2001)
   !          S. W. Bougher (2004-MTGCM15, 2007-Mars GITM)
   !  Inputs: from MarsGITM  (Pressure, Temperature, VMRCO2, VMRO, VMRN2CO)
@@ -409,7 +409,7 @@ subroutine calc_radcooling(iBlock)
   !
   !     subroutine nltecool(nlayer,player,tlayer,dt)
   !
-  ! This code was designed as a delivery for the "Martian Environment Models" 
+  ! This code was designed as a delivery for the "Martian Environment Models"
   ! project ( ESA contract 11369/95/nl/jg CCN2 )
   ! Computes non-LTE heating rates from CO2 emission at 15 um
   ! in the Martian upper atmosphere.
@@ -427,7 +427,7 @@ subroutine calc_radcooling(iBlock)
   !
   ! Version 1b.  See description above.  22-March-2000.
   ! Adapted as a subroutine for use in GCM -- PLR/SRL 6/2000
-  ! Version 1c.  Inclusion of VMR in the tabulation of escape functions. 
+  ! Version 1c.  Inclusion of VMR in the tabulation of escape functions.
   !              Table contains now only 1 input file -- Miguel 11/Jul/2000
   ! Nov-2001     Adapt to the MZ1D model (1D version & extended parametp_table)
   ! Nov-2005     Adapt to the MTGCM16 model (3D version & extended parametp_table)
@@ -447,7 +447,7 @@ subroutine calc_radcooling(iBlock)
 
   ! INPUTS:----------------------------------------------------------
 
-  integer,intent(in):: iBlock 
+  integer,intent(in):: iBlock
 
   !  -----------------------------------------------------------------
   ! Input variables
@@ -458,7 +458,7 @@ subroutine calc_radcooling(iBlock)
   real :: player(nlayer)            ! input pressure grid [Pa]
   real :: tlayer(nlayer)            ! input temperatures [K]
   logical :: found
-  
+
   !  -----------------------------------------------------------------
 
   ! Standard atmosphere variables (overlay with MarsGITM values)
@@ -468,19 +468,19 @@ subroutine calc_radcooling(iBlock)
   ! Vectors/indexes for the datavol2 tabulation of escape functions and VMR
 
   !     Number data points in Tabulation (in ModMars module)
-  !     integer,parameter :: np=68 
+  !     integer,parameter :: np=68
   !     Dimensioned above from ModMars module
   !     real ::  pnbr(np), ef1(np), ef2(np), co2vmr(np), o3pvmr(np), n2covmr(np)
   !     Reference Pressure (Pascals) from 1-D NLTE code
-  real ::  pnb(np) 
+  real ::  pnb(np)
   !     Interpolated escape functions
-  real ::  escf1(nlayer) , escf2(nlayer) 
+  real ::  escf1(nlayer) , escf2(nlayer)
 
   ! Local Constants and variables
 
   real  ::  n1, n2, co2t , l1, p1, p12 , l2, p2, p21
   real  ::  tt, c1, c2, ae1, ae2,  a1, a2, a12, a21
-  real  ::  pl1, pl2, el1, el2, hr1, hr2, x 
+  real  ::  pl1, pl2, el1, el2, hr1, hr2, x
   real  ::  hr(nlayer)  ,peakval
 
   ! Indexes
@@ -505,7 +505,7 @@ subroutine calc_radcooling(iBlock)
   ! Internal fields recast from MarsGITM
 
   real,dimension(1:nLons,1:nLats,1:nAlts) ::    &
-       T, P, vmrco2, vmro, vmrn2co, cooltot, mnd 
+       T, P, vmrco2, vmro, vmrn2co, cooltot, mnd
 
   !     Mars GITM real temperature (on its grid)  ----------------------
 
@@ -520,23 +520,23 @@ subroutine calc_radcooling(iBlock)
 
   !    Volume Mixing Ratio Calculations
 
-  mnd(1:nLons,1:nLats,1:nAlts) = &  
+  mnd(1:nLons,1:nLats,1:nAlts) = &
        NDensity(1:nLons,1:nLats,1:nAlts,iBlock)+1.0
 
-  vmro(1:nLons,1:nLats,1:nAlts)  = & 
+  vmro(1:nLons,1:nLats,1:nAlts)  = &
        NdensityS(1:nLons,1:nLats,1:nAlts,iO_,iBlock)/ &
        mnd(1:nLons,1:nLats,1:nAlts)
-  vmrn2co(1:nLons,1:nLats,1:nAlts) = & 
+  vmrn2co(1:nLons,1:nLats,1:nAlts) = &
        (NdensityS(1:nLons,1:nLats,1:nAlts,iCO_,iBlock)  &
        + NdensityS(1:nLons,1:nLats,1:nAlts,iN2_,iBlock))/ &
-       mnd(1:nLons,1:nLats,1:nAlts) 
-  vmrco2(1:nLons,1:nLats,1:nAlts) = &  
+       mnd(1:nLons,1:nLats,1:nAlts)
+  vmrco2(1:nLons,1:nLats,1:nAlts) = &
        NdensityS(1:nLons,1:nLats,1:nAlts,iCO2_,iBlock) &
        /mnd(1:nLons,1:nLats,1:nAlts)
 
   !  -----------------------------------------------------------------
   !
-  ! **** ARRAYS made available via init_radcool 
+  ! **** ARRAYS made available via init_radcool
   ! **** Convert pnb array to pascal units here
   !
   do i=1,np
@@ -544,16 +544,16 @@ subroutine calc_radcooling(iBlock)
   enddo
 
   ! ****  Initialize to zero
-  cooltot(1:nLons,1:nLats,1:nAlts) = 0.0 
+  cooltot(1:nLons,1:nLats,1:nAlts) = 0.0
 
   !-------------------------------------------------------------
 
-  ! MAIN LOOP, for MarsGITM horizontal grid (Latitude,Longitude) 
+  ! MAIN LOOP, for MarsGITM horizontal grid (Latitude,Longitude)
 
   do iLat = 1, nlat
      do iLon = 1, nlon
 
-        ! *****  populate 1-D arrays(nlayer) for calc_radcooling from MarsGITM 
+        ! *****  populate 1-D arrays(nlayer) for calc_radcooling from MarsGITM
         do  iAlt=1,nlayer
            player(iAlt)= P(iLon,iLat,iAlt)
            tlayer(iAlt)= T(iLon,iLat,iAlt)
@@ -569,18 +569,18 @@ subroutine calc_radcooling(iBlock)
         ! ALTITUDE LOOP, for each altitude (for 1-latitude/longitude profile):
         ! (from old nltecool.F routine)
 
-        do i=1,nlayer  
+        do i=1,nlayer
 
-           if (player(i).gt.PLONG .or. player(i).lt.4.0e-6) then 
+           if (player(i).gt.PLONG .or. player(i).lt.4.0e-6) then
 
               hr(i)=0.0
               cooltot(iLon,iLat,i)= 0
 
            else
 
-              nt = player(i)/(1.381e-17*tlayer(i)) 
-              co2(i)=co2(i)*nt                
-              o3p(i)=o3p(i)*nt                
+              nt = player(i)/(1.381e-17*tlayer(i))
+              co2(i)=co2(i)*nt
+              o3p(i)=o3p(i)*nt
               n2co(i)=n2co(i)*nt
               n1 = co2(i) * imr1
               n2 = co2(i) * imr2
@@ -641,16 +641,16 @@ subroutine calc_radcooling(iBlock)
               cooltot(iLon,iLat,i)= 0.1*hr(i)*tlayer(i)/(4.4*player(i))
 
            endif
-        
-        enddo  !-------- END OF MAIN ALTITUDE LOOP  
-     enddo  !-------- END OF MAIN LONGITUDE LOOP  
-  enddo  !-------- END OF MAIN LATITUDE LOOP  
+
+        enddo  !-------- END OF MAIN ALTITUDE LOOP
+     enddo  !-------- END OF MAIN LONGITUDE LOOP
+  enddo  !-------- END OF MAIN LATITUDE LOOP
 
   !-------------------------------------------------------------
 
 ! CO2 Cooing Rate
   RadCoolingRate(1:nLons,1:nLats,1:nAlts,iBlock) = &
-       -cooltot(1:nLons,1:nLats,1:nAlts) 
+       -cooltot(1:nLons,1:nLats,1:nAlts)
 
 !  Diagnostics
      !-----------------------------------------------------------------
@@ -692,12 +692,12 @@ end subroutine calc_radcooling
 subroutine interp1(escout,p,nlayer,escin,pin,nl)
   implicit none
 
-  ! subroutine to perform linear interpolation in pressure from 1D profile 
+  ! subroutine to perform linear interpolation in pressure from 1D profile
   ! escin(nl) sampled on pressure grid pin(nl) to profile
   ! escout(nlayer) on pressure grid p(nlayer).
   !
   ! Input args:
-  !     integer,intent(in):: iBlock 
+  !     integer,intent(in):: iBlock
 
   integer,intent(in) :: nlayer,nl
   real,dimension(nl),intent(in) :: escin,pin
@@ -752,7 +752,7 @@ subroutine init_radcool
   !/
 
   pnbr = (/ 12.0000, 11.0000, 10.8000, 10.6000, 10.4000, 10.2000, &
-       10.0000, 9.80000, 9.60000, 9.40000, 9.20000, 9.00000, 8.80000,   & 
+       10.0000, 9.80000, 9.60000, 9.40000, 9.20000, 9.00000, 8.80000,   &
        8.60000, 8.40000, 8.20000, 8.00000, 7.80000, 7.60000, 7.40000,   &
        7.20000, 7.00000, 6.80000, 6.60000, 6.40000, 6.20000, 6.00000,   &
        5.80000, 5.60000, 5.40000, 5.20000, 5.00000, 4.80000, 4.60000,   &
@@ -847,7 +847,7 @@ subroutine init_isochem
   use ModSizeGITM
 
 
-  implicit none 
+  implicit none
 
   integer :: iBlock, iLon, iLat, iAlt
 
@@ -856,7 +856,7 @@ subroutine init_isochem
   do iBlock = 1, nBlocks
      do iLon = 1, nLons
         do iLat = 1, nLats
-           do ialt = 1, nAlts 
+           do ialt = 1, nAlts
               if (Altitude_GB(iLon,iLat,ialt,iBlock)/1000.0 .le. AltMinIono) &
                    iAltMinIono(iLon,iLat,iBlock) = iAlt
               if (ialtminiono(ilon,ilat,iblock) .lt. 1)  ialtminiono(ilon,ilat,iblock) = 1
@@ -917,7 +917,7 @@ end subroutine init_isochem
            do iAlt = 1, nAlts
 
               if (Pressure(iLon,iLat,iAlt,iBlock) > PEddyMax) then
-                 cycle    
+                 cycle
               else
                  if (First == 0) then
                     NEddyMax(iLon,iLat) = NDensity(iLon,iLat,iAlt,iBlock)
@@ -939,7 +939,7 @@ end subroutine init_isochem
            do iLon = 1, nLons
 
               KappaEddyDiffusion(iLon,iLat,iAlt,iBlock) =  &
-                   KMax* sqrt( NEddyMax(iLon,iLat) / NDensity(iLon,iLat,iAlt,iBlock)) 
+                   KMax* sqrt( NEddyMax(iLon,iLat) / NDensity(iLon,iLat,iAlt,iBlock))
               !
               !! \
               !! This gives an upper bound of Kmax
@@ -960,7 +960,7 @@ end subroutine init_isochem
 
 
    ! ----------------------------------------------------------------------
-   
+
    subroutine calc_gw(iBlock)
 
      use ModInputs
@@ -1057,7 +1057,7 @@ end subroutine init_isochem
               !
               !   Calculate the density values at layer boundaries using the average of
               !  the pressures at the two neighboring layer midpoints and the average
-              !  temperature at that same layer boundary;  this is a poor way of calculating 
+              !  temperature at that same layer boundary;  this is a poor way of calculating
               !  this average density and will be improved upon using independently
               !  determined values of pressure and temperature at layer boundaries
 
@@ -1084,7 +1084,7 @@ end subroutine init_isochem
 
            TS = KAP * rhosfc * Nsfc * (U(1)) * VAR
            !write(88,*) ts,kap,rhosfc,nsfc,theta(1), &
-            !    dtheta(1),dz(1),u(1) 
+            !    dtheta(1),dz(1),u(1)
            !print *, TS, KAP,Nsfc,U(1),VAR
 
            !     Set STRESS(NLAY+1) value equal to the surface drag value
@@ -1132,7 +1132,7 @@ end subroutine init_isochem
 
                     !   for this layer within which a CRITICAL LEVEL has arisen and
                     !   wave momentum has been deposited, calculate the wind acceleration
-                    !   (units of m/s/s) by dividing the  dstress value by the mass (kg) 
+                    !   (units of m/s/s) by dividing the  dstress value by the mass (kg)
                     !   in the layer; a NEGATIVE sign indicates a westward acceleration,
                     !   and a positive value indicates an eastward accaleration
 
@@ -1144,7 +1144,7 @@ end subroutine init_isochem
                     dh(nl) = -9.99
                     dhsat(nl) = -9.99
                     !     the  goto  statement below sends the code to the next layer,
-                    !   but in actuality there is no further need to continue upwards 
+                    !   but in actuality there is no further need to continue upwards
                     !   in this column since there is no wave energy to consider...
                     !   THIS CAN BE IMPROVED AND MADE MORE EFFICIENT
 
@@ -1194,7 +1194,7 @@ end subroutine init_isochem
 
                     !  Calculate the 'minimum' Richardson Number at the top of Layer  nl
                     ! using the Brunt-Vaisala frequency, estimated isentropic vertical displacement,
-                    ! average zonal wind speed, and Richardson Number already calculated at that 
+                    ! average zonal wind speed, and Richardson Number already calculated at that
                     ! layer boundary of interest
 
                     !    implement  ABS(uav(nl))
@@ -1228,7 +1228,7 @@ end subroutine init_isochem
 !                            (1.0+2.0*(xRi**0.50))**(-0.50),  &
 !                            ((2*(xRi**0.250)*(1.0+2.0*(xRi**0.50))**(-0.50))-1.0)
 
-                       !  eps  will not be less than zero, since if it did have a 
+                       !  eps  will not be less than zero, since if it did have a
                        !  negative value it would result in a negative  dh  value
 
                        eps(nl) = max(eps(nl),0.0)
@@ -1263,7 +1263,7 @@ end subroutine init_isochem
 
                           !  If the stress value at the top of Layer  nl  is greater than
                           ! zero but less than the stress value at the bottom of layer  nl,
-                          ! the stress value at the top of Layer  nl  is as calculated before 
+                          ! the stress value at the top of Layer  nl  is as calculated before
                           ! entering this  if  statement and the dstress value is set equal to
                           ! stress(nl) - stress(nl+1)
 
@@ -1293,10 +1293,10 @@ end subroutine init_isochem
 
               GWAccel(ilon,ilat,nl,iEast_) = dudt(nl) * Dt
 
-22            continue              
+22            continue
 
            !  The above   22  continue statement ends the primary loop over
-           ! vertical layers (1 to NLAY-1) 
+           ! vertical layers (1 to NLAY-1)
 
 
            !  Now, deal with the top model layer; if the stress value at the
@@ -1350,7 +1350,7 @@ end subroutine init_isochem
        L_NLAYRAD,L_NLEVRAD)
 
     !  ---------------------------------------------------------------------
-    !  Purpose: to calculate LTE CO2 15-micron heating/cooling in Mars 
+    !  Purpose: to calculate LTE CO2 15-micron heating/cooling in Mars
     !  lower atmosphere(below 80 km, where LTE physics dominates)
     !  Source: correlated k radiation code in Ames GCM v2.0
     !  Coders: Bob Haberle and Jim Schaeffer (2001)
@@ -1379,7 +1379,7 @@ end subroutine init_isochem
     implicit none
     ! ----------------------------------------------------------------------
 
-    integer,intent(in):: iBlock 
+    integer,intent(in):: iBlock
 
     !C     Number of lower atmosphere layers
     integer,intent(in) :: L_LAYERS
@@ -1388,12 +1388,12 @@ end subroutine init_isochem
     integer,intent(in) :: L_LEVELS
 
     !C     L_NLEVRAD corresponds to the surface - i.e., the GCM Level that
-    !C     is at the surface.  PLEV(L_NLEVRAD) = P(J,I)+PTROP, 
+    !C     is at the surface.  PLEV(L_NLEVRAD) = P(J,I)+PTROP,
     !C     PLEV(2) = PTROP, PLEV(1) = ptop
 
     !C     L_NLAYRAD is the number of radiation code layers
     !C     L_NLEVRAD is the number of radiation code levels.  Level N is the
-    !C               top of layer N. 
+    !C               top of layer N.
 
     integer, intent(in) :: L_NLAYRAD, L_NLEVRAD, ilat,ilon
 
@@ -1486,7 +1486,7 @@ end subroutine init_isochem
 
        tDiff = CurrentTime - DustTime
        ctDiff = CurrentTime - ConrathTime
-       
+
        where(tDiff .lt. 1) tDiff = 1e20
        where(ctDiff .lt. 1) ctDiff = 1e20
 
@@ -1516,7 +1516,7 @@ end subroutine init_isochem
        conrnu = conrnu_temp
     endif
 
-    
+
     CALL DUSTPROFILE(PLEV(L_LEVELS),PTROP,PLEV,TAUCUM,TAUREF,L_LEVELS,TauTot,ConrNU)
 
 
@@ -1526,7 +1526,7 @@ end subroutine init_isochem
     !C  The radiation code wants number mixing ratio.  The TOTAL mass in each
     !C  layer is just the mass of CO2, not CO2+H2O.  If we change the total
     !C  mass, then the expresion for MWRATIO would change to read
-    !C  MWRATIO = (MWCO2+MWH2O)/MWH2O.  
+    !C  MWRATIO = (MWCO2+MWH2O)/MWH2O.
 
     !   THIS HOOK IS FOR FUTURE POSSIBILITIES CONCERNING WATER VAPOR
 
@@ -1536,7 +1536,7 @@ end subroutine init_isochem
 !!$            K = 2*L+2
 !!$           QH2O(K)   = MWRATIO*QTRACE(JCMN,ICMN,L,M)
 !!$           QH2O(K+1) = QH2O(K)
-!!$          END DO        
+!!$          END DO
 
     !C  Set up, and solve for, the solar (visual) fluxes, if the sun
     !C  is up
@@ -1632,7 +1632,7 @@ end subroutine init_isochem
           XLTECORRECTION(L1) = XLTEFACTOR(MALT) + &
                (XLTEFACTOR(MALT+1)-XLTEFACTOR(MALT))*&
                DLOG(P(L_NLAYRAD-L1)/XLTEPRESSURE(MALT))/&
-               DLOG(XLTEPRESSURE(MALT+1)/XLTEPRESSURE(MALT))   
+               DLOG(XLTEPRESSURE(MALT+1)/XLTEPRESSURE(MALT))
        ENDIF
 
        fluxid(L1)  = FMNETI(L)-FMNETI(L-1)
@@ -1660,7 +1660,7 @@ end subroutine init_isochem
        !Buffer region, Bougher found a buffer needed for appropriate near-IR rates
        !near the top of the atmosphere, since NLTE correction breaks down.
        HEATING(1) = 0.0
-       HEATING(2) = 0.0 
+       HEATING(2) = 0.0
 
        lowatmosradrate(iLon,iLat,L_NLAYRAD-L1,iBlock)=TOTAL(L1)
 !      qnirlte(iLon,iLat,L_NLAYRAD-L1,iBlock)= XLTECORRECTION(L1)
@@ -1673,7 +1673,7 @@ end subroutine init_isochem
             (SubsurfaceTemp(iLon,iLat,iBlock)-&
             SurfaceTemp(iLon,iLat,iBlock))+2.0*PI/Pa*&
             (CoreTemp-SubsurfaceTemp(iLon,iLat,iBlock))
-       
+
        dSurfaceTemp(iLon,iLat,iBlock) = 1.0/(0.5*tinertia(iLon,iLat,iBlock)*&
             sqrt(Pd/PI))*(fluxdnv(L_NLAYRAD)*(1.0-SurfaceAlbedo(iLon,iLat,iBlock))+&
             fluxdni(L_NLAYRAD)-SBconstant*SurfaceTemp(iLon,iLat,iBlock)**4.0)+&
@@ -1699,7 +1699,7 @@ end subroutine init_isochem
     !C  Put the T & P GCM arrays onto the NRC grid:  PLEV, PMID, TLEV, TMID
     !C  Sept 2002
     !C
-    !C  PMID and TMID are the pressure and temperature at the GCM layer 
+    !C  PMID and TMID are the pressure and temperature at the GCM layer
     !C  mid-points.  PLEV and TLEV are the pressures and temperatures at
     !C  the GCM layer boundaries, i.e. at GCM levels.
 
@@ -1722,7 +1722,7 @@ end subroutine init_isochem
     PBOT = PBOT*0.01 !convert bottom pressure to mbars
 !altmin = 2429.59375
     ! Calculate boundary altitudes
-    
+
 !if (altmid(1) .gt. 0) then
 !     ALTBOUND(0)=(ALTMIN+altmid(1))/2.
 !  else
@@ -1749,9 +1749,9 @@ ALTBOUND(0) = altbot
     ALTLEVELS(0) = ALTMID(L_LAYERS+2)
     ALTLEVELS(1) = ALTBOUND(L_LAYERS+1)
     ALTLEVELS(2) = ALTMID(L_LAYERS+1)
-    ALTLEVELS(3) = ALTBOUND(L_LAYERS) 
+    ALTLEVELS(3) = ALTBOUND(L_LAYERS)
     ALTLEVELS(L_LEVELS+1) = (ALTBOUND(0)+Altmin)/2.
-    
+
     PLEV(1) = EXP(DLOG(P(L_LAYERS+1)) + (DLOG(P(L_LAYERS+2))-&
          DLOG(P(L_LAYERS+1)))*&
          (ALTLEVELS(1)-ALTLEVELS(2))/&
@@ -1769,9 +1769,9 @@ ALTBOUND(0) = altbot
 !write(*,*) plev(k),k
 !write(*,*) altmid(nk),altbound(nk),altlevels(k)-altlevels(k+1)
 !if (iproc .eq. 21) write(*,*) k,nk,plev(k),P(nk),pbot
-!write(*,*) 
+!write(*,*)
     END DO
- 
+
 !write(*,*) l_levels,l_layers
 !if (iproc .eq. 21) stop
 !!!!!!!!!!!!!!!!!! This is the issue (maybe) !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1793,7 +1793,7 @@ ALTBOUND(0) = altbot
 !    endif
     PLEV(L_LEVELS+1) = PLEV(L_LEVELS)
 
-    
+
 !    if (plev(l_levels) .lt. plev(l_levels -1)) then
 !       write(*,*) "p: ",altbot,altmin,pbot,altbound(0),altmid(0),altmid(1)
 !       do l = 1,l_levels+1
@@ -1853,9 +1853,9 @@ ALTBOUND(0) = altbot
 
   subroutine dustprofile(PSF,PTROP,PLEV,TAUCUM,TAUREF,L_LEVELS,TauTot,ConrNU)
 
-    !C Bob's updates 9/17/99 
+    !C Bob's updates 9/17/99
     !C Reference the dust optical depth to PSF (The surface pressure, mbar),
-    !C and modify the way the dust mixing ratio is calculated to more accurately 
+    !C and modify the way the dust mixing ratio is calculated to more accurately
     !C reflect the pressure-optical depth relationship.
     !C GCM2.0  Sept 2002
     !C Driver:  Jan 2003 - Modified from GCM 3-D to DRIVER 1-D
@@ -1896,7 +1896,7 @@ ALTBOUND(0) = altbot
           sum  = sum + exp(conrnu*(1.-(rptau/pave)))*&
                (prdst(n)-prdst(n-1))
        end if
-       if (prdst(n).ge.rptau) go to 10 
+       if (prdst(n).ge.rptau) go to 10
     end do
 
 10  continue
@@ -1919,7 +1919,7 @@ ALTBOUND(0) = altbot
           qrdst(n) = qrdst0*exp(conrnu*(1.0-(rptau/pave)))
        end if
 
-       !C Region 2: Reference pressure level within this layer. 
+       !C Region 2: Reference pressure level within this layer.
 
        if (rptau.le.prdst(n+1).and.rptau.ge.prdst(n)) then
           pave     = 0.5*(prdst(n)+rptau)
@@ -1977,7 +1977,7 @@ ALTBOUND(0) = altbot
     !C  March 2002   c-grid
     !C  GCM2.0  Sept 2002
     !C
-    !C      Find the first array element that is greater than the 
+    !C      Find the first array element that is greater than the
     !C      TARGET value.  If N < 1, then 0 is returned.  If no
     !C      value is found, N+1 is returned.  Replaces Cray version
     !C      on the workstation.
@@ -2047,7 +2047,7 @@ ALTBOUND(0) = altbot
 
 !!$C  GCM2.0  Feb 2003
 !!$C
-!!$C THIS SUBROUTINE SETS THE OPTICAL CONSTANTS IN THE VISUAL  
+!!$C THIS SUBROUTINE SETS THE OPTICAL CONSTANTS IN THE VISUAL
 !!$C IT CALCUALTES FOR EACH LAYER, FOR EACH SPECRAL INTERVAL IN THE VISUAL
 !!$C LAYER: WBAR, DTAU, COSBAR
 !!$C LEVEL: TAU
@@ -2057,7 +2057,7 @@ ALTBOUND(0) = altbot
 !!$C
 !!$C     TLEV(L) - Temperature at the layer boundary
 !!$C     PLEV(L) - Pressure at the layer boundary (i.e. level)
-!!$C     CO2V(NT,NPS,NW,NG) - Visual CO2 k-coefficients 
+!!$C     CO2V(NT,NPS,NW,NG) - Visual CO2 k-coefficients
 !!$C
 !!$C----------------------------------------------------------------------C
     use ModPlanet
@@ -2190,7 +2190,7 @@ ALTBOUND(0) = altbot
 !                write(*,*) dtaukv(k,nw,ng),taugas,u(k),ans
 !                stop
 !endif
-            
+
           end do
           if(TAUGSURF(NW,NG) .LT. TLIMIT) THEN
              goto 10
@@ -2325,7 +2325,7 @@ ALTBOUND(0) = altbot
 !!$C
 !!$C                          (TW,PW)
 !!$C
-!!$C           
+!!$C
 !!$C           (PL,TL)                        (PRR,TL)
 !!$C
 !!$C     PL  - Pressure left
@@ -2353,7 +2353,7 @@ ALTBOUND(0) = altbot
 !!$C    TW                 - The temperature to interpolate to
 !!$C    Pref(NP)           - The pressure grid array.
 !!$C    Tref(NT)           - The temperature grid array.
-!!$C    
+!!$C
 !!$C  OUTPUT PARAMETERS
 !!$C    TI                 - Interpolation term (pressure)
 !!$C    UI                 - Interpolation term (temperature)
@@ -2363,7 +2363,7 @@ ALTBOUND(0) = altbot
 !!$C                         of bounding box
 !!$C
 !!$C  CALLED BY
-!!$C    SETRAD 
+!!$C    SETRAD
 !!$C
 !!$C  SUBROUTINES CALLED
 !!$C      NONE
@@ -2438,7 +2438,7 @@ ALTBOUND(0) = altbot
     LCOEF(3) = T*U
     LCOEF(4) = (1.0-T)*U
 
-    !C  Get the indicies for water abundance.  There are 10 sets of 
+    !C  Get the indicies for water abundance.  There are 10 sets of
     !C  k-coefficients with differing amounts of water vs. CO2.
 
     IF(Qh2o.le.WREFH2O(1)) then
@@ -2547,8 +2547,8 @@ ALTBOUND(0) = altbot
           !C         WE CAN NOW SOLVE FOR THE COEFFICIENTS OF THE TWO STREAM
           !C         CALL A SUBROUTINE THAT SOLVES  FOR THE FLUX TERMS
           !C         WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER
-          !C 
-          !C         FUW AND FDW ARE WORKING FLUX ARRAYS THAT WILL BE USED TO 
+          !C
+          !C         FUW AND FDW ARE WORKING FLUX ARRAYS THAT WILL BE USED TO
           !C         RETURN FLUXES FOR A GIVEN NT
 
           CALL GFLUXV(DTAUV(1,NW,NG),TAUV(1,NW,NG),TAUCUMV(1,NW,NG),&
@@ -2556,7 +2556,7 @@ ALTBOUND(0) = altbot
                BTOP,BSURF,FMUPV,FMDV,DIFFV,FLUXUP,FLUXDN,&
                L_LAYERS,L_LEVELS,L_NLAYRAD,L_NLEVRAD)
 
-          !C         NOW CALCULATE THE CUMULATIVE VISIBLE NET FLUX 
+          !C         NOW CALCULATE THE CUMULATIVE VISIBLE NET FLUX
 
           NFLUXTOPV = NFLUXTOPV+(FLUXUP-FLUXDN)*GWEIGHT(NG)*&
                (1.0-FZEROV(NW))
@@ -2574,9 +2574,9 @@ ALTBOUND(0) = altbot
 
           DIFFVT = DIFFVT + DIFFV*GWEIGHT(NG)*(1.0-FZEROV(NW))
 
-       END DO   ! the Gauss loop 
+       END DO   ! the Gauss loop
 
-40     continue 
+40     continue
 
        !C       Special 17th Gauss point
 
@@ -2594,8 +2594,8 @@ ALTBOUND(0) = altbot
        !C       WE CAN NOW SOLVE FOR THE COEFFICIENTS OF THE TWO STREAM
        !C       CALL A SUBROUTINE THAT SOLVES  FOR THE FLUX TERMS
        !C       WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER
-       !C 
-       !C       FUW AND FDW ARE WORKING FLUX ARRAYS THAT WILL BE USED TO 
+       !C
+       !C       FUW AND FDW ARE WORKING FLUX ARRAYS THAT WILL BE USED TO
        !C       RETURN FLUXES FOR A GIVEN NT
 
        CALL GFLUXV(DTAUV(1,NW,NG),TAUV(1,NW,NG),TAUCUMV(1,NW,NG),&
@@ -2603,7 +2603,7 @@ ALTBOUND(0) = altbot
             BTOP,BSURF,FMUPV,FMDV,DIFFV,FLUXUP,FLUXDN,&
             L_LAYERS,L_LEVELS,L_NLAYRAD,L_NLEVRAD)
 
-       !C       NOW CALCULATE THE CUMULATIVE VISIBLE NET FLUX 
+       !C       NOW CALCULATE THE CUMULATIVE VISIBLE NET FLUX
 
        NFLUXTOPV = NFLUXTOPV+(FLUXUP-FLUXDN)*FZERO
        DO L=1,L_NLAYRAD
@@ -2635,18 +2635,18 @@ ALTBOUND(0) = altbot
 !!$C  GCM2.0  Feb 2003
 !!$C
 !!$C ?? COMBINE INTO ONE GLFLUX ROUTINE, NOT VIS AND IR
-!!$C 
+!!$C
 !!$C  THIS SUBROUTINE TAKES THE OPTICAL CONSTANTS AND BOUNDARY CONDITIONS
 !!$C  FOR THE VISIBLE  FLUX AT ONE WAVELENGTH AND SOLVES FOR THE FLUXES AT
 !!$C  THE LEVELS. THIS VERSION IS SET UP TO WORK WITH LAYER OPTICAL DEPTHS
-!!$C  MEASURED FROM THE TOP OF EACH LAYER.  (DTAU) TOP OF EACH LAYER HAS  
+!!$C  MEASURED FROM THE TOP OF EACH LAYER.  (DTAU) TOP OF EACH LAYER HAS
 !!$C  OPTICAL DEPTH TAU(N).IN THIS SUB LEVEL N IS ABOVE LAYER N. THAT IS LAYER N
 !!$C  HAS LEVEL N ON TOP AND LEVEL N+1 ON BOTTOM. OPTICAL DEPTH INCREASES
 !!$C  FROM TOP TO BOTTOM. SEE C.P. MCKAY, TGM NOTES.
-!!$C THIS SUBROUTINE DIFFERS FROM ITS IR COUNTERPART IN THAT HERE WE SOLVE FOR 
+!!$C THIS SUBROUTINE DIFFERS FROM ITS IR COUNTERPART IN THAT HERE WE SOLVE FOR
 !!$C THE FLUXES DIRECTLY USING THE GENERALIZED NOTATION OF MEADOR AND WEAVOR
 !!$C J.A.S., 37, 630-642, 1980.
-!!$C THE TRI-DIAGONAL MATRIX SOLVER IS DSOLVER AND IS DOUBLE PRECISION SO MANY 
+!!$C THE TRI-DIAGONAL MATRIX SOLVER IS DSOLVER AND IS DOUBLE PRECISION SO MANY
 !!$C VARIABLES ARE PASSED AS SINGLE THEN BECOME DOUBLE IN DSOLVER
 !!$C
 !!$C NLL           = NUMBER OF LEVELS (NAYER + 1) THAT WILL BE SOLVED
@@ -2656,7 +2656,7 @@ ALTBOUND(0) = altbot
 !!$C TDEL(NLL)     = ARRAY COLUMN OPTICAL DEPTH AT THE LEVELS
 !!$C WDEL(NLEVEL)  = SINGLE SCATTERING ALBEDO
 !!$C CDEL(NLL)     = ASYMMETRY FACTORS, 0=ISOTROPIC
-!!$C UBARV         = AVERAGE ANGLE, 
+!!$C UBARV         = AVERAGE ANGLE,
 !!$C UBAR0         = SOLAR ZENITH ANGLE
 !!$C F0PI          = INCIDENT SOLAR DIRECT BEAM FLUX
 !!$C RSF           = SURFACE REFLECTANCE
@@ -2668,7 +2668,7 @@ ALTBOUND(0) = altbot
 !!$C FMIDM(NLAYER) = DOWNWARD FLUX AT LAYER MIDPOINTS
 !!$C added Dec 2002
 !!$C DIFFV         = downward diffuse solar flux at the surface
-!!$C 
+!!$C
 
        use ModPlanet
        use ModGITM, only: iProc
@@ -2698,7 +2698,7 @@ ALTBOUND(0) = altbot
        NAYER  = L_NLAYRAD
        TAUMAX = L_TAUMAX    !Default is 35.0
 
-!!$C  Delta function updates.  Use scaled values, calculated below.      
+!!$C  Delta function updates.  Use scaled values, calculated below.
 !!$c     DO L=1,L_NLAYRAD
 !!$c       W0(L)     = WDEL(L)
 !!$c       COSBAR(L) = CDEL(L)
@@ -2739,7 +2739,7 @@ ALTBOUND(0) = altbot
        TAUCUMP(K) = TAU(L+1)
 !       if  (iproc .eq. 21 .and. dtau(47) .lt. -700000) then
 !          write(*,*) "dtau: ",DTAU(47),DTDEL(47),WDEL(47),CDEL(47),l_nlayrad
-!       endif          
+!       endif
        !C     WE GO WITH THE QUADRATURE APPROACH HERE.  THE "SQRT(3)" factors
        !C     ARE THE UBARV TERM.
 
@@ -2747,7 +2747,7 @@ ALTBOUND(0) = altbot
 
           ALPHA(L)=SQRT( (1.0-W0(L))/(1.0-W0(L)*COSBAR(L)) )
 
-          !C       SET OF CONSTANTS DETERMINED BY DOM 
+          !C       SET OF CONSTANTS DETERMINED BY DOM
 
           G1(L)    = (SQRT(3.0)*0.5)*(2.0- W0(L)*(1.0+COSBAR(L)))
           G2(L)    = (SQRT(3.0)*W0(L)*0.5)*(1.0-COSBAR(L))
@@ -2761,7 +2761,7 @@ ALTBOUND(0) = altbot
           DENOM = LAMDA(L)**2 - 1./UBAR0**2
 
           !C       THERE IS A POTENTIAL PROBLEM HERE IF W0=0 AND UBARV=UBAR0
-          !C       THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN 
+          !C       THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN
           !C       THE SCATTERING GOES TO ZERO
           !C       PREVENT THIS WITH AN IF STATEMENT
 
@@ -2808,7 +2808,7 @@ ALTBOUND(0) = altbot
 
        !C     NOW WE CALCULATE THE FLUXES AT THE MIDPOINTS OF THE LAYERS.
 
-       !C  For original, unscaled, version, use TAUCUM, not TAUCUMP 
+       !C  For original, unscaled, version, use TAUCUM, not TAUCUMP
        DO L=1,L_NLAYRAD-1
           !c     EXPTRM(L) = MIN(TAUMAX,LAMDA(L)*(TAUCUM(2*L+1)-TAUCUM(2*L)))
           EXPTRM(L) = MIN(TAUMAX,LAMDA(L)*(TAUCUMP(2*L+1)-TAUCUMP(2*L)))
@@ -2820,7 +2820,7 @@ ALTBOUND(0) = altbot
           DENOM = LAMDA(L)**2 - 1./UBAR0**2
 
           !C       THERE IS A POTENTIAL PROBLEM HERE IF W0=0 AND UBARV=UBAR0
-          !C       THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN 
+          !C       THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN
           !C       THE SCATTERING GOES TO ZERO
           !C       PREVENT THIS WITH A IF STATEMENT
 
@@ -2857,7 +2857,7 @@ ALTBOUND(0) = altbot
        DENOM = LAMDA(1)**2 - 1./UBAR0**2
 
        !C     THERE IS A POTENTIAL PROBLEM HERE IF W0=0 AND UBARV=UBAR0
-       !C     THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN 
+       !C     THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN
        !C     THE SCATTERING GOES TO ZERO
        !C     PREVENT THIS WITH A IF STATEMENT
 
@@ -2885,7 +2885,7 @@ ALTBOUND(0) = altbot
        !C     This is for the "special" bottom layer, where we take
        !C     DTAU instead of DTAU/2.
 
-       L     = L_NLAYRAD 
+       L     = L_NLAYRAD
        EXPTRM(L) = MIN(TAUMAX,LAMDA(L)*(TAUCUMP(L_LEVELS)-&
             TAUCUMP(L_LEVELS-1)))
        !c     EXPTRM(L) = MIN(TAUMAX,LAMDA(L)*(TAUCUM(L_LEVELS)-&
@@ -2897,7 +2897,7 @@ ALTBOUND(0) = altbot
        DENOM = LAMDA(L)**2 - 1./UBAR0**2
 
        !C     THERE IS A POTENTIAL PROBLEM HERE IF W0=0 AND UBARV=UBAR0
-       !C     THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN 
+       !C     THEN DENOM WILL VANISH. THIS ONLY HAPPENS PHYSICALLY WHEN
        !C     THE SCATTERING GOES TO ZERO
        !C     PREVENT THIS WITH A IF STATEMENT
 
@@ -2995,7 +2995,7 @@ ALTBOUND(0) = altbot
 
        DO I=2,LM2,2
           N     = N+1
-          AF(I) = (E1(N)+E3(N))*(GAMA(N+1)-1.)       
+          AF(I) = (E1(N)+E3(N))*(GAMA(N+1)-1.)
           BF(I) = (E2(N)+E4(N))*(GAMA(N+1)-1.)
           CF(I) = 2.0*(1.-GAMA(N+1)**2)
           DF(I) = (GAMA(N+1)-1.) * (CPM1(N+1) - CP(N)) +&
@@ -3036,7 +3036,7 @@ ALTBOUND(0) = altbot
 
 !!!! next line added by ridley and pawlowski
           XK(2*N-1) = max(abs(XK(2*n-1)),1.0e-30)*sign(1.0,XK(2*n-1))
-         
+
 
           IF (ABS (XK2(N)/XK(2*N-1)) .LT. 1.E-30) XK2(N)=0.0
 
@@ -3069,14 +3069,14 @@ ALTBOUND(0) = altbot
 
           AS(L) = AF(L)/BF(L)
           DS(L) = DF(L)/BF(L)
-!          if (AS(L) .ne. AS(L) .or. ds(L) .ne. ds(l)) then 
+!          if (AS(L) .ne. AS(L) .or. ds(L) .ne. ds(l)) then
 !             write(*,*) "ne: ", as(l),ds(l),BF(L)
 !endif
           DO I=2,L
              X         = 1./(BF(L+1-I) - CF(L+1-I)*AS(L+2-I))
              AS(L+1-I) = AF(L+1-I)*X
              DS(L+1-I) = (DF(L+1-I)-CF(L+1-I)*DS(L+2-I))*X
-!             if (ds(L+1-I) .ne. ds(L+1-I))then 
+!             if (ds(L+1-I) .ne. ds(L+1-I))then
 !                write(*,*)"dtr: ",I, df(L+1-I),DF(L+1-I),DS(L+2-I),X,BF(L+1-I),cf(L+1-I),AS(L+2-I),af(L+1-I)
 !             endif
           END DO
@@ -3106,7 +3106,7 @@ END DO
 !!$C LAYER: WBAR, DTAU, COSBAR
 !!$C LEVEL: TAU
 !!$C
-!!$C Qrefv is the extinction coefficient at the reference (visible) 
+!!$C Qrefv is the extinction coefficient at the reference (visible)
 !!$C wavelength - 0.67 microns.
 !!$C
 !!$C TAUI(L,LW) is the cumulative optical depth at level L (or alternatively
@@ -3114,7 +3114,7 @@ END DO
 !!$C
 !!$C     TLEV(L) - Temperature at the layer boundary (i.e. level)
 !!$C     PLEV(L) - Pressure at the layer boundary (i.e. level)
-!!$C     CO2_KI(NT,NP,NW,NG) - IR CO2 k-coefficients 
+!!$C     CO2_KI(NT,NP,NW,NG) - IR CO2 k-coefficients
 !!$C                           CO2_K(temp,Pres,Waveln,gauss)
 !!$C                           currently: CO2_K(7,11,5,17)
 !!$C
@@ -3178,9 +3178,9 @@ END DO
           do K=2,L_LEVELS
              DPR(k) = PLEV(K)-PLEV(K-1)
              U(k)   = Cmk*DPR(k)
-!             if (U(k) .lt. 0) then 
+!             if (U(k) .lt. 0) then
 !                write(*,*) u(k),dpr(k),plev(k), plev(k-1)
- 
+
 !endif
              call tpindex(PMID(K),TMID(K),QH2O(K),pfgasref,tgasref,&
                   LCOEF,MT(K),MP(K),NH2O(K),WRATIO(K))
@@ -3437,7 +3437,7 @@ END DO
 
                 !C         WE CAN NOW SOLVE FOR THE COEFFICIENTS OF THE TWO STREAM
                 !C         CALL A SUBROUTINE THAT SOLVES  FOR THE FLUX TERMS
-                !C         WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER 
+                !C         WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER
 !write(*,*) "before: ",taucumi(1,nw,ng),nw,ng
 !write(*,*) "before: ",taucumi(:,nw,ng)
                 CALL GFLUXI(NLEVRAD,TLEV,NW,DWNI(NW),DTAUI(1,NW,NG),&
@@ -3454,7 +3454,7 @@ END DO
                 DO L=1,L_NLEVRAD-1
 
                    !C           CORRECT FOR THE WAVENUMBER INTERVALS
-!if (l .eq. 45 .and. ng .eq.15 .and. nw .eq. 3) then 
+!if (l .eq. 45 .and. ng .eq.15 .and. nw .eq. 3) then
 !stop
 !write(*,*) fmneti(l),fmupi(l),fmdi(l),dwni(nw),gweight(ng),fzeroi(nw)
 !endif
@@ -3464,7 +3464,7 @@ END DO
                         (1.0-FZEROI(NW))
                    FLUXDNI(L) = FLUXDNI(L) + FMDI(L)*DWNI(NW)*GWEIGHT(NG)*&
                         (1.0-FZEROI(NW))
-!if (l .eq. 45 .and. ng .eq.15 .and. nw .eq. 3) then 
+!if (l .eq. 45 .and. ng .eq.15 .and. nw .eq. 3) then
 !write(*,*) fmneti(l)
 !stop
 !endif
@@ -3487,7 +3487,7 @@ END DO
 
              !C      WE CAN NOW SOLVE FOR THE COEFFICIENTS OF THE TWO STREAM
              !C      CALL A SUBROUTINE THAT SOLVES  FOR THE FLUX TERMS
-             !C      WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER 
+             !C      WITHIN EACH INTERVAL AT THE MIDPOINT WAVENUMBER
 
              CALL GFLUXI(NLEVRAD,TLEV,NW,DWNI(NW),DTAUI(1,NW,NG),&
                   TAUCUMI(1,NW,NG),&
@@ -3532,11 +3532,11 @@ END DO
 !!$C  THIS SUBROUTINE TAKES THE OPTICAL CONSTANTS AND BOUNDARY CONDITIONS
 !!$C  FOR THE INFRARED FLUX AT ONE WAVELENGTH AND SOLVES FOR THE FLUXES AT
 !!$C  THE LEVELS. THIS VERSION IS SET UP TO WORK WITH LAYER OPTICAL DEPTHS
-!!$C  MEASURED FROM THE TOP OF EACH LAYER.  THE TOP OF EACH LAYER HAS  
+!!$C  MEASURED FROM THE TOP OF EACH LAYER.  THE TOP OF EACH LAYER HAS
 !!$C  OPTICAL DEPTH ZERO.  IN THIS SUB LEVEL N IS ABOVE LAYER N. THAT IS LAYER N
 !!$C  HAS LEVEL N ON TOP AND LEVEL N+1 ON BOTTOM. OPTICAL DEPTH INCREASES
 !!$C  FROM TOP TO BOTTOM. SEE C.P. MCKAY, TGM NOTES.
-!!$C THE TRI-DIAGONAL MATRIX SOLVER IS DSOLVER AND IS DOUBLE PRECISION SO MANY 
+!!$C THE TRI-DIAGONAL MATRIX SOLVER IS DSOLVER AND IS DOUBLE PRECISION SO MANY
 !!$C VARIABLES ARE PASSED AS SINGLE THEN BECOME DOUBLE IN DSOLVER
 !!$C
 !!$C NLL            = NUMBER OF LEVELS (NLAYERS + 1) MUST BE LESS THAT NL (101)
@@ -3562,7 +3562,7 @@ END DO
              implicit none
 
              INTEGER :: L_LAYERS,L_LEVELS,L_NLAYRAD,L_NLEVRAD
-             integer,PARAMETER :: NL=101 ! MUST BE LARGER THAN NLEVEL 
+             integer,PARAMETER :: NL=101 ! MUST BE LARGER THAN NLEVEL
 
 
              INTEGER :: NLL, NLAYER, L, NW, NT, NT2
@@ -3661,7 +3661,7 @@ END DO
 
              DO L=1,L_NLAYRAD-1
                 DTAUK = TAUCUM(2*L+1)-TAUCUM(2*L)
-                EP    = EXP(MIN(LAMDA(L)*DTAUK,TAUMAX)) ! CLIPPED EXPONENTIAL 
+                EP    = EXP(MIN(LAMDA(L)*DTAUK,TAUMAX)) ! CLIPPED EXPONENTIAL
                 EM    = 1.0/EP
                 TERM  = UBARI/(1.-W0(L)*COSBAR(L))
 
@@ -3688,7 +3688,7 @@ END DO
 
              L    = L_NLAYRAD
 
-             EP   = EXP(MIN((LAMDA(L)*DTAU(L)),TAUMAX)) ! CLIPPED EXPONENTIAL 
+             EP   = EXP(MIN((LAMDA(L)*DTAU(L)),TAUMAX)) ! CLIPPED EXPONENTIAL
              EM   = 1.0/EP
              TERM = UBARI/(1.-W0(L)*COSBAR(L))
 
@@ -3743,3 +3743,102 @@ END DO
            subroutine planet_limited_fluxes(iBlock)
              !! Do Nothing
            end subroutine planet_limited_fluxes
+
+
+subroutine ReadMagField
+
+  use ModGITM
+  use ModInputs
+
+  implicit None
+
+  integer, parameter :: MagLons = 360 , MagLats=180, MagAlts=89, Maxdim=4
+
+  real, dimension(1:89,1:360,1:180, 4) :: MagField
+  real, dimension(1:54,1:54,1:124) :: Magdata64
+  integer :: ilon, ilat, ialt, iblock, Mlat1, MLat2,i,j,k,jlon,jlat,jalt,Magdim
+  integer :: iilon,iialt,iilat, ii, jj, kk, tt, Magdimfix
+  real :: Blat, Blon,Balt, latfind,lonfind,Altfind,c00,c10,c01,c11,c0,c1,c
+  real, dimension(1:360) :: MagFieldLon
+  real, dimension(1:180) :: MagFieldLat
+  real, dimension(1:89) :: MagFieldAlt
+
+  do i=1,MagAlts
+     MagFieldAlt(i)=80+(2.5*(i-1))
+  enddo
+  do j=1,MagLons
+     MagFieldLon(j)=j
+  enddo
+  do k=1,MagLats
+     MagFieldLat(k)=k-90
+  enddo
+
+  open(unit=42, file='DataIn/MarsMagField4dim.dat', action='read',access='sequential', status="old")
+  write(*,*) "=====> Reading Magnetic Field"
+
+  read(42,*) MagField
+  close(42)
+  do iBlock = 1, nBlocks
+     do Magdim =1, Maxdim
+        do ialt = 1, nAlts
+           do iLon = 1, nLons
+              do iLat = 1, nLats
+
+                 LonFind = Longitude(iLon,iBlock)*180/pi
+                 LatFind = latitude(iLat,iBlock)*180/pi
+                 AltFind = Altitude_GB(ilon,ilat,ialt,iBlock)/1000
+
+                 do jLon = 1, MagLons-1
+
+                    if (MagFieldLon(jLon) <= LonFind .and. &
+                         MagFieldLon(jLon+1) >= LonFind) then
+                       iiLon = jLon
+                       BLon = (LonFind-MagFieldLon(jLon))/&
+                            (MagFieldLon(jlon+1)-MagFieldLon(jlon))
+                    endif
+                 enddo
+
+                 do jLat = 1, MagLats-1
+
+                    if (MagFieldlat(jlat) <= LatFind .and. &
+                         MagFieldLat(jlat+1) >= LatFind) then
+                       iiLat = jLat
+                       BLat = (LatFind-MagFieldLat(jLat))/&
+                            (MagFieldLat(jlat+1)-MagFieldLat(jlat))
+
+                    endif
+                 enddo
+
+                 do jAlt=1, MagAlts-1
+
+                    if (MagFieldAlt(jAlt)<= AltFind .and. &
+                         MagFieldAlt(jAlt+1) >= AltFind) then
+                       iiAlt=jAlt
+                       BAlt =  (AltFind-MagFieldAlt(jAlt))/&
+                            (MagFieldAlt(jAlt+1)-MagFieldLat(jAlt))
+
+                   endif
+                 enddo
+                 if (iialt <= 0 .or. iialt > MagAlts) then
+                     B0(iLon,iLat,iAlt,Magdim,iBlock)=0
+                 else
+                    c00=MagField(iialt,iilon,iilat,Magdim)*(1-Blon) + &
+                    MagField(iialt,iilon+1,iilat,Magdim)*Blon
+                    c10=MagField(iialt,iilon,iilat+1,Magdim)*(1-Blon)+ &
+                    MagField(iialt,iilon+1,iilat+1,Magdim)*Blon
+                    c01=MagField(iialt+1,iilon,iilat,Magdim)*(1-Blon)+ &
+                    MagField(iialt+1,iilon+1,iilat, Magdim)*Blon
+                    c11=MagField(iialt+1,iilon,iilat+1,Magdim)*(1-Blon)+ &
+                    Magfield(iialt+1,iilon+1,iilat+1,Magdim)*Blon
+                    c0= c00*(1-Blat)+c10*Blat
+                    c1= c01*(1-Blat)+c11*Blat
+                    c= c0*(1-Balt)+c1*Balt
+                    B0(iLon,iLat,iAlt,Magdim,iBlock)=c*1.8
+                 endif
+              enddo
+         enddo
+      enddo
+    enddo
+   enddo
+
+end subroutine ReadMagField
